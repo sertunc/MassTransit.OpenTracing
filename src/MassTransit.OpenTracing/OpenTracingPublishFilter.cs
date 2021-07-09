@@ -15,7 +15,7 @@ namespace MassTransit.OpenTracing
             var operationName = $"Publishing Message: {context.DestinationAddress.GetExchangeName()}";
 
             var spanBuilder = GlobalTracer.Instance.BuildSpan(operationName)
-               .AsChildOf(GlobalTracer.Instance.ActiveSpan.Context)
+               .AsChildOf(GlobalTracer.Instance.ActiveSpan?.Context)
                .WithTag("destination-address", context.DestinationAddress?.ToString())
                .WithTag("source-address", context.SourceAddress?.ToString())
                .WithTag("initiator-id", context.InitiatorId?.ToString())
@@ -24,7 +24,7 @@ namespace MassTransit.OpenTracing
             using (var scope = spanBuilder.StartActive())
             {
                 GlobalTracer.Instance.Inject(
-                   GlobalTracer.Instance.ActiveSpan.Context,
+                   GlobalTracer.Instance.ActiveSpan?.Context,
                    BuiltinFormats.TextMap,
                    new MassTransitTextMapInjectAdapter(context));
 
